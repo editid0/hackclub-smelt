@@ -22,9 +22,13 @@
 		} else {
 			ready = true;
 			addToStack();
-			showPattern();
 		}
 	});
+
+	function startGame() {
+		started = true;
+		showPattern();
+	}
 
 	function addToStack() {
 		const colours = ['red', 'blue', 'green', 'amber'];
@@ -54,6 +58,7 @@
 				showPattern();
 			} else {
 				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
+				alert("Sorry, that's not right, resetting game.");
 				resetGame();
 				allowInput = false;
 			}
@@ -64,6 +69,7 @@
 				position++;
 			} else {
 				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
+				alert("Sorry, that's not right, resetting game.");
 				resetGame();
 				allowInput = false;
 			}
@@ -120,7 +126,7 @@
 				<button
 					class="rounded bg-blue-500 px-4 py-2 text-white"
 					onclick={() => {
-						started = true;
+						startGame();
 					}}
 				>
 					Start Simon Says
