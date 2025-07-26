@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	let sampleText = 'The quick brown fox jumps over the lazy dog.';
 	let userInput = $state('');
 	let startTime: number | null = null;
@@ -41,15 +43,17 @@
 		inputEnabled = true;
 	}
 
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Shift') {
-			shiftPressed = true;
-		}
-	});
-	document.addEventListener('keyup', (e) => {
-		if (e.key === 'Shift') {
-			shiftPressed = false;
-		}
+	onMount(() => {
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Shift') {
+				shiftPressed = true;
+			}
+		});
+		document.addEventListener('keyup', (e) => {
+			if (e.key === 'Shift') {
+				shiftPressed = false;
+			}
+		});
 	});
 </script>
 

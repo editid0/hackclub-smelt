@@ -38,23 +38,29 @@
 			console.error('Position out of bounds');
 			return;
 		}
-		if (stack[position] === colour) {
-			position++;
-			userStack = [...userStack, colour];
-			console.log(`Correct! Current stack: ${userStack.join(', ')}`);
-			if (position === stack.length) {
-				console.log('You completed the stack!');
+		if (position == stack.length - 1) {
+			// user is at the end of the stack, so if they get the colour right, we add a new colour and reset position
+			if (stack[position] === colour) {
+				console.log(`Correct! ${colour} was the last colour in the stack.`);
 				addToStack();
 				userStack = [];
+				position = 0;
+			} else {
+				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
+				userStack = [];
+				position = 0;
 			}
 		} else {
-			console.error(`Incorrect! Expected ${stack[position]}, but got ${colour}`);
-			userStack = [];
-			position = 0;
-			started = false;
-			alert('Wrong colour! Resetting the game.');
-			stack = [];
-			addToStack();
+			// user is not at the end of the stack, so we just check if the colour matches
+			if (stack[position] === colour) {
+				console.log(`Correct! ${colour} matches the stack at position ${position}.`);
+				userStack = [...userStack, colour];
+				position++;
+			} else {
+				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
+				userStack = [];
+				position = 0;
+			}
 		}
 	}
 </script>
@@ -92,7 +98,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="flex items-center justify-center rounded-lg border-2 p-4"
+							class="red flex items-center justify-center rounded-lg border-2 p-4"
 							onclick={() => checkStack('red')}
 						>
 							<p>Red</p>
@@ -100,7 +106,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="flex items-center justify-center rounded-lg border-2 p-4"
+							class="blue flex items-center justify-center rounded-lg border-2 p-4"
 							onclick={() => checkStack('blue')}
 						>
 							<p>Blue</p>
@@ -108,7 +114,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="flex items-center justify-center rounded-lg border-2 p-4"
+							class="green flex items-center justify-center rounded-lg border-2 p-4"
 							onclick={() => checkStack('green')}
 						>
 							<p>Green</p>
@@ -116,7 +122,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="flex items-center justify-center rounded-lg border-2 p-4"
+							class="yellow flex items-center justify-center rounded-lg border-2 p-4"
 							onclick={() => checkStack('yellow')}
 						>
 							<p>Yellow</p>
@@ -129,3 +135,22 @@
 {:else}
 	<p>Loading...</p>
 {/if}
+
+<style>
+	.red {
+		background-color: red;
+		color: white;
+	}
+	.blue {
+		background-color: blue;
+		color: white;
+	}
+	.green {
+		background-color: green;
+		color: white;
+	}
+	.yellow {
+		background-color: yellow;
+		color: black;
+	}
+</style>
