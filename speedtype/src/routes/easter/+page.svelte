@@ -1,5 +1,5 @@
 <script>
-	import { setContext } from 'svelte';
+	import { onMount } from 'svelte';
 
 	let ready = $state(false);
 	/**
@@ -10,20 +10,20 @@
 	let stackList = $derived(stack.join(', '));
 	let started = $state(false);
 	let position = $state(0);
+	let allowInput = $state(false);
 
-	// Only runs in the browser
-	if (typeof window !== 'undefined') {
+	onMount(() => {
 		if (!document.referrer.includes(window.location.host)) {
 			window.location.href = '/';
 		} else {
 			ready = true;
 			addToStack();
+			showPattern();
 		}
-	}
+	});
 
 	function addToStack() {
-		// Pick a random colour to add to the stack
-		const colours = ['red', 'blue', 'green', 'yellow'];
+		const colours = ['red', 'blue', 'green', 'amber'];
 		const randomColour = colours[Math.floor(Math.random() * colours.length)];
 		stack = [...stack, randomColour];
 		position = stack.length - 1;
@@ -34,6 +34,10 @@
 	 */
 	function checkStack(colour) {
 		if (position < 0) return;
+		if (!allowInput) {
+			console.warn('Input not allowed at this time.');
+			return;
+		}
 		if (position >= stack.length) {
 			console.error('Position out of bounds');
 			return;
@@ -45,6 +49,7 @@
 				addToStack();
 				userStack = [];
 				position = 0;
+				showPattern();
 			} else {
 				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
 				userStack = [];
@@ -62,6 +67,36 @@
 				position = 0;
 			}
 		}
+	}
+	function showPattern() {
+		allowInput = false;
+		let i = 0;
+		const interval = setInterval(() => {
+			if (i >= stack.length) {
+				allowInput = true;
+				clearInterval(interval);
+				return;
+			}
+			const colour = stack[i];
+			const element = document.querySelector(`.bg-${colour}-500`);
+			if (element) {
+				console.log(element);
+				element.classList.add('bg-white');
+				var had_text = element.classList.contains('text-black');
+				if (!had_text) {
+					element.classList.add('text-black');
+				}
+				setTimeout(() => {
+					if (!had_text) {
+						element.classList.remove('text-black');
+					}
+					element.classList.remove('bg-white');
+				}, 1000);
+			} else {
+				console.error(`Element for colour ${colour} not found.`);
+			}
+			i++;
+		}, 1500);
 	}
 </script>
 
@@ -84,48 +119,102 @@
 				</button>
 			{/if}
 			{#if started}
-				<button
-					class="ml-4 rounded bg-red-500 px-4 py-2 text-white"
-					onclick={() => {
-						stack = [];
-						started = false;
-					}}
-				>
-					Reset
-				</button>
+				<div class="flex w-full flex-row items-center justify-between">
+					<button
+						class="ml-4 w-full cursor-pointer rounded bg-red-600 px-4 py-2 text-white"
+						onclick={() => {
+							stack = [];
+							started = false;
+						}}
+					>
+						Reset
+					</button>
+					<button
+						class="ml-4 w-full cursor-pointer rounded bg-green-600 px-4 py-2 text-white"
+						onclick={() => {
+							showPattern();
+						}}
+					>
+						Show Pattern
+					</button>
+				</div>
 				<div class="mx-auto w-[10cm]">
 					<div class="mt-4 grid grid-cols-2 gap-4">
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="red flex items-center justify-center rounded-lg border-2 p-4"
-							onclick={() => checkStack('red')}
+							class={'flex select-none items-center justify-center rounded-lg border-2 bg-red-500 p-4 transition-all duration-150 ease-in-out' +
+								(allowInput
+									? ' cursor-pointer hover:scale-105 active:scale-95'
+									: ' cursor-not-allowed opacity-50')}
+							onclick={(e) => {
+								if (!allowInput) return;
+								checkStack('red');
+								const button = e.currentTarget;
+								button.classList.add('bg-red-300', 'scale-95');
+								setTimeout(() => {
+									button.classList.remove('bg-red-300', 'scale-95');
+								}, 150);
+							}}
 						>
-							<p>Red</p>
+							<p class="font-semibold">Red</p>
 						</div>
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="blue flex items-center justify-center rounded-lg border-2 p-4"
-							onclick={() => checkStack('blue')}
+							class={'flex select-none items-center justify-center rounded-lg border-2 bg-blue-500 p-4 transition-all duration-150 ease-in-out' +
+								(allowInput
+									? ' cursor-pointer hover:scale-105 active:scale-95'
+									: ' cursor-not-allowed opacity-50')}
+							onclick={(e) => {
+								if (!allowInput) return;
+								checkStack('blue');
+								const button = e.currentTarget;
+								button.classList.add('bg-blue-300', 'scale-95');
+								setTimeout(() => {
+									button.classList.remove('bg-blue-300', 'scale-95');
+								}, 150);
+							}}
 						>
-							<p>Blue</p>
+							<p class="font-semibold">Blue</p>
 						</div>
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="green flex items-center justify-center rounded-lg border-2 p-4"
-							onclick={() => checkStack('green')}
+							class={'flex select-none items-center justify-center rounded-lg border-2 bg-green-500 p-4 transition-all duration-150 ease-in-out' +
+								(allowInput
+									? ' cursor-pointer hover:scale-105 active:scale-95'
+									: ' cursor-not-allowed opacity-50')}
+							onclick={(e) => {
+								if (!allowInput) return;
+								checkStack('green');
+								const button = e.currentTarget;
+								button.classList.add('bg-green-300', 'scale-95');
+								setTimeout(() => {
+									button.classList.remove('bg-green-300', 'scale-95');
+								}, 150);
+							}}
 						>
-							<p>Green</p>
+							<p class="font-semibold text-black">Green</p>
 						</div>
 						<!-- svelte-ignore a11y_click_events_have_key_events -->
 						<!-- svelte-ignore a11y_no_static_element_interactions -->
 						<div
-							class="yellow flex items-center justify-center rounded-lg border-2 p-4"
-							onclick={() => checkStack('yellow')}
+							class={'flex select-none items-center justify-center rounded-lg border-2 bg-amber-500 p-4 transition-all duration-150 ease-in-out' +
+								(allowInput
+									? ' cursor-pointer hover:scale-105 active:scale-95'
+									: ' cursor-not-allowed opacity-50')}
+							onclick={(e) => {
+								if (!allowInput) return;
+								checkStack('amber');
+								const button = e.currentTarget;
+								button.classList.add('bg-amber-300', 'scale-95');
+								setTimeout(() => {
+									button.classList.remove('bg-amber-300', 'scale-95');
+								}, 150);
+							}}
 						>
-							<p>Yellow</p>
+							<p class="font-semibold text-black">Yellow</p>
 						</div>
 					</div>
 				</div>
@@ -135,22 +224,3 @@
 {:else}
 	<p>Loading...</p>
 {/if}
-
-<style>
-	.red {
-		background-color: red;
-		color: white;
-	}
-	.blue {
-		background-color: blue;
-		color: white;
-	}
-	.green {
-		background-color: green;
-		color: white;
-	}
-	.yellow {
-		background-color: yellow;
-		color: black;
-	}
-</style>
