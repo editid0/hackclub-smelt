@@ -1,12 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	let sampleText = 'The quick brown fox jumps over the lazy dog.';
+	let sentences = [
+		'The quick brown fox jumps over the lazy dog.',
+		'Smelt is a YSWS.',
+		'Typescript is worse than Javascript.',
+		'Python is the best programming language.'
+	];
+
+	let sampleText = $state('Loading...');
 	let userInput = $state('');
 	let startTime: number | null = null;
 	let wpm = $state(0);
 	let accuracy = $state(100);
-	let inputEnabled = $state(true);
+	let inputEnabled = $state(false);
 	let shiftPressed = $state(false);
 
 	const calculateWPM = () => {
@@ -24,9 +31,9 @@
 		if (!startTime) startTime = Date.now();
 		userInput = (e.target as HTMLTextAreaElement).value;
 
+		wpm = calculateWPM();
+		accuracy = calculateAccuracy();
 		if (userInput.length >= sampleText.length) {
-			wpm = calculateWPM();
-			accuracy = calculateAccuracy();
 			if (accuracy < 0) accuracy = 0;
 			inputEnabled = false;
 			if (wpm > 600) {
@@ -54,6 +61,9 @@
 				shiftPressed = false;
 			}
 		});
+		sampleText = sentences[Math.floor(Math.random() * sentences.length)];
+		inputEnabled = true;
+		document.getElementById('userInput')?.focus();
 	});
 </script>
 
@@ -81,13 +91,14 @@
 		class="max-w-full rounded-lg border-2 p-2 font-mono text-lg outline-0"
 		style="resize: none;"
 		readonly={!inputEnabled}
+		id="userInput"
 	></textarea>
 	<div class="w-full max-w-md rounded-lg border-2 p-4 text-center">
 		<h2 class="text-3xl font-semibold">Your stats</h2>
-		{#if userInput.length < sampleText.length}
-			<p class="text-lg">Finish typing to see your stats!</p>
+		{#if wpm === 0}
+			<p class="text-lg">Start typing to see your stats!</p>
 		{:else}
-			<p class="text-lg">You finished! Here are your stats:</p>
+			<p class="text-lg">Here are your stats:</p>
 			<p>WPM: <span class="font-mono">{wpm}</span></p>
 			<p>Accuracy: <span class="font-mono">{accuracy}%</span></p>
 		{/if}
@@ -103,7 +114,7 @@
 </div>
 
 <!-- Easter Egg Trigger -->
-{#if userInput.includes('all work and no play')}
+{#if userInput.includes('editid')}
 	<div class="fullscreen bg-white dark:bg-black">
 		<h2>Hey!</h2>
 		<p>You've found the easter egg. Congratulations!</p>
