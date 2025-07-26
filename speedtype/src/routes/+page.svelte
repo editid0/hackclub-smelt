@@ -5,7 +5,10 @@
 		'The quick brown fox jumps over the lazy dog.',
 		'Smelt is a YSWS.',
 		'Typescript is worse than Javascript.',
-		'Python is the best programming language.'
+		'Python is the best programming language.',
+		'She sells seashells by the seashore.',
+		'The juxtaposition of modern architecture and ancient ruins was strikingly beautiful.',
+		'"Don\'t", Dan dared, "dash down dusty, dimly-lit docks during December\'s dismal drizzle - disaster\'s definitely due."'
 	];
 
 	let sampleText = $state('Loading...');
@@ -15,6 +18,8 @@
 	let accuracy = $state(100);
 	let inputEnabled = $state(false);
 	let shiftPressed = $state(false);
+	let allowBackspace = $state(true);
+	let allowBackspaceChange = $state(true);
 
 	const calculateWPM = () => {
 		const words = userInput.trim().split(/\s+/).length;
@@ -29,6 +34,10 @@
 
 	function handleInput(e: Event) {
 		if (!startTime) startTime = Date.now();
+		if (!inputEnabled) return;
+
+		allowBackspaceChange = false;
+
 		userInput = (e.target as HTMLTextAreaElement).value;
 
 		wpm = calculateWPM();
@@ -42,12 +51,22 @@
 		}
 	}
 
+	function preventBackspace(event) {
+		if (event.keyCode === 8) {
+			if (!allowBackspace) {
+				event.preventDefault();
+				return;
+			}
+		}
+	}
+
 	function resetGame() {
 		userInput = '';
 		startTime = null;
 		wpm = 0;
 		accuracy = 100;
 		inputEnabled = true;
+		allowBackspaceChange = true;
 	}
 
 	onMount(() => {
@@ -73,6 +92,14 @@
 		Type the text below as quickly and accurately as you can, time starts when you first press a
 		key.
 	</p>
+	<p class="flex flex-row items-center gap-2">
+		Allow backspace? <input
+			type="checkbox"
+			bind:checked={allowBackspace}
+			disabled={!allowBackspaceChange}
+			class="size-7"
+		/>
+	</p>
 	<p
 		class="mx-auto w-fit rounded-xl border-2 p-2 text-center font-mono text-xl"
 		style="white-space: pre-wrap; user-select: none;"
@@ -87,6 +114,7 @@
 		rows="5"
 		bind:value={userInput}
 		oninput={handleInput}
+		onkeydown={preventBackspace}
 		placeholder="Type here..."
 		class="max-w-full rounded-lg border-2 p-2 font-mono text-lg outline-0"
 		style="resize: none;"
@@ -98,7 +126,7 @@
 		{#if wpm === 0}
 			<p class="text-lg">Start typing to see your stats!</p>
 		{:else}
-			<p class="text-lg">Here are your stats:</p>
+			<p class="text-lg">Your stats stats:</p>
 			<p>WPM: <span class="font-mono">{wpm}</span></p>
 			<p>Accuracy: <span class="font-mono">{accuracy}%</span></p>
 		{/if}
