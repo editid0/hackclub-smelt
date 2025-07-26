@@ -8,6 +8,8 @@
 	let stack = $state([]);
 	let userStack = $state([]);
 	let stackList = $derived(stack.join(', '));
+	let score = $derived(stack.length);
+	let lastScore = $state(-1);
 	let started = $state(false);
 	let position = $state(0);
 	let allowInput = $state(false);
@@ -27,7 +29,6 @@
 		const randomColour = colours[Math.floor(Math.random() * colours.length)];
 		stack = [...stack, randomColour];
 		position = stack.length - 1;
-		console.log(`New stack: ${stackList}`);
 	}
 	/**
 	 * @param {any} colour
@@ -45,26 +46,24 @@
 		if (position == stack.length - 1) {
 			// user is at the end of the stack, so if they get the colour right, we add a new colour and reset position
 			if (stack[position] === colour) {
-				console.log(`Correct! ${colour} was the last colour in the stack.`);
 				addToStack();
 				userStack = [];
 				position = 0;
 				showPattern();
 			} else {
 				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
-				userStack = [];
-				position = 0;
+				resetGame();
+				allowInput = false;
 			}
 		} else {
 			// user is not at the end of the stack, so we just check if the colour matches
 			if (stack[position] === colour) {
-				console.log(`Correct! ${colour} matches the stack at position ${position}.`);
 				userStack = [...userStack, colour];
 				position++;
 			} else {
 				console.error(`Wrong! Expected ${stack[position]}, but got ${colour}.`);
-				userStack = [];
-				position = 0;
+				resetGame();
+				allowInput = false;
 			}
 		}
 	}
@@ -80,7 +79,6 @@
 			const colour = stack[i];
 			const element = document.querySelector(`.bg-${colour}-500`);
 			if (element) {
-				console.log(element);
 				element.classList.add('bg-white');
 				var had_text = element.classList.contains('text-black');
 				if (!had_text) {
@@ -97,6 +95,14 @@
 			}
 			i++;
 		}, 1500);
+	}
+	function resetGame() {
+		lastScore = score - 1;
+		stack = [];
+		userStack = [];
+		position = 0;
+		addToStack();
+		showPattern();
 	}
 </script>
 
@@ -123,8 +129,7 @@
 					<button
 						class="ml-4 w-full cursor-pointer rounded bg-red-600 px-4 py-2 text-white"
 						onclick={() => {
-							stack = [];
-							started = false;
+							resetGame();
 						}}
 					>
 						Reset
@@ -217,6 +222,12 @@
 							<p class="font-semibold text-black">Yellow</p>
 						</div>
 					</div>
+				</div>
+				<div class="mt-4 flex w-full flex-col items-center">
+					<p class="font-semibold">Your score: <span class="font-mono">{score - 1}</span></p>
+					{#if lastScore !== -1}
+						<p class="font-semibold">Last score: <span class="font-mono">{lastScore}</span></p>
+					{/if}
 				</div>
 			{/if}
 		</div>
