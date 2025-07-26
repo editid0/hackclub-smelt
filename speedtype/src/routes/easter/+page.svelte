@@ -6,8 +6,10 @@
 	 * @type {any[]}
 	 */
 	let stack = $state([]);
+	/**
+	 * @type {any[]}
+	 */
 	let userStack = $state([]);
-	let stackList = $derived(stack.join(', '));
 	let score = $derived(stack.length);
 	let lastScore = $state(-1);
 	let started = $state(false);

@@ -51,7 +51,7 @@
 		}
 	}
 
-	function preventBackspace(event) {
+	function preventBackspace(event: { keyCode: number; preventDefault: () => void }) {
 		if (event.keyCode === 8) {
 			if (!allowBackspace) {
 				event.preventDefault();
