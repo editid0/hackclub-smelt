@@ -2,7 +2,12 @@
 	import { setContext } from 'svelte';
 
 	let ready = $state(false);
+	/**
+	 * @type {any[]}
+	 */
 	let stack = $state([]);
+	let userStack = $state([]);
+	let stackList = $derived(stack.join(', '));
 	let started = $state(false);
 	let position = $state(0);
 
@@ -12,6 +17,7 @@
 			window.location.href = '/';
 		} else {
 			ready = true;
+			addToStack();
 		}
 	}
 
@@ -21,20 +27,34 @@
 		const randomColour = colours[Math.floor(Math.random() * colours.length)];
 		stack = [...stack, randomColour];
 		position = stack.length - 1;
+		console.log(`New stack: ${stackList}`);
 	}
 	/**
 	 * @param {any} colour
 	 */
 	function checkStack(colour) {
+		if (position < 0) return;
+		if (position >= stack.length) {
+			console.error('Position out of bounds');
+			return;
+		}
 		if (stack[position] === colour) {
-			position--;
-			if (position < 0) {
+			position++;
+			userStack = [...userStack, colour];
+			console.log(`Correct! Current stack: ${userStack.join(', ')}`);
+			if (position === stack.length) {
+				console.log('You completed the stack!');
 				addToStack();
+				userStack = [];
 			}
 		} else {
-			// Reset the stack if the wrong colour is clicked
-			stack = [];
+			console.error(`Incorrect! Expected ${stack[position]}, but got ${colour}`);
+			userStack = [];
 			position = 0;
+			started = false;
+			alert('Wrong colour! Resetting the game.');
+			stack = [];
+			addToStack();
 		}
 	}
 </script>
@@ -51,7 +71,6 @@
 				<button
 					class="rounded bg-blue-500 px-4 py-2 text-white"
 					onclick={() => {
-						stack.push('simon');
 						started = true;
 					}}
 				>
