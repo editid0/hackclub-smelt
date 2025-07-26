@@ -8,7 +8,10 @@
 		'Python is the best programming language.',
 		'She sells seashells by the seashore.',
 		'The juxtaposition of modern architecture and ancient ruins was strikingly beautiful.',
-		'"Don\'t", Dan dared, "dash down dusty, dimly-lit docks during December\'s dismal drizzle - disaster\'s definitely due."'
+		'"Don\'t", Dan dared, "dash down dusty, dimly-lit docks during December\'s dismal drizzle - disaster\'s definitely due."',
+		'The five boxing wizards jump quickly.',
+		"Bizarrely, the judge's jumbled justification jeopardised Jerry's jobial journey, jolting justifications into jittery, jigsaw-like jargon.",
+		"Jack's jittery justification - jarringly juxtaposed with Jill's judicious jargon - juggled jeapardy, jest, and jaded judgement, just as Jeremy jotted jealous journal entries joylessly."
 	];
 
 	let sampleText = $state('Loading...');
