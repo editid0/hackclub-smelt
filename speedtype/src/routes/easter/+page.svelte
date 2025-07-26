@@ -22,6 +22,9 @@
 		stack = [...stack, randomColour];
 		position = stack.length - 1;
 	}
+	/**
+	 * @param {any} colour
+	 */
 	function checkStack(colour) {
 		if (stack[position] === colour) {
 			position--;
@@ -67,16 +70,36 @@
 				</button>
 				<div class="mx-auto w-[10cm]">
 					<div class="mt-4 grid grid-cols-2 gap-4">
-						<div class="flex items-center justify-center rounded-lg border-2 p-4">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="flex items-center justify-center rounded-lg border-2 p-4"
+							onclick={() => checkStack('red')}
+						>
 							<p>Red</p>
 						</div>
-						<div class="flex items-center justify-center rounded-lg border-2 p-4">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="flex items-center justify-center rounded-lg border-2 p-4"
+							onclick={() => checkStack('blue')}
+						>
 							<p>Blue</p>
 						</div>
-						<div class="flex items-center justify-center rounded-lg border-2 p-4">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="flex items-center justify-center rounded-lg border-2 p-4"
+							onclick={() => checkStack('green')}
+						>
 							<p>Green</p>
 						</div>
-						<div class="flex items-center justify-center rounded-lg border-2 p-4">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_static_element_interactions -->
+						<div
+							class="flex items-center justify-center rounded-lg border-2 p-4"
+							onclick={() => checkStack('yellow')}
+						>
 							<p>Yellow</p>
 						</div>
 					</div>
